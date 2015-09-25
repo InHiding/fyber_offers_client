@@ -46,11 +46,11 @@ RSpec.configure do |config|
     config.configure_rspec_metadata!
     config.allow_http_connections_when_no_cassette = true
 
-    config.before_http_request do |request|
-      VCR.insert_cassette('fyber', :record => :new_episodes, match_requests_on: [:method, :uri, :body])
+    config.before_http_request do
+      VCR.insert_cassette('fyber', match_requests_on: [:method, :uri, :body])
     end
 
-    config.after_http_request do |request|
+    config.after_http_request do
       VCR.eject_cassette
     end
   end
