@@ -16,7 +16,10 @@ class OfferController < ApplicationController
     if res.status == 200
       if fclient.check_response(res.body, res.headers['x-sponsorpay-response-signature'])
         @info = result[:information]
-        @offers = result.try(:[], :offers)
+        page = search_params[:page] || 1
+        @offers = WillPaginate::Collection.create(page, 15, result[:count]) do |pager|
+          pager.replace result.try(:[], :offers) || []
+        end
       else
         @error = 'Server sent an invalid response. Please try again.'
       end
