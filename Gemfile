@@ -5,6 +5,9 @@ gem 'rails', '4.2.1'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+gem 'faraday', '~> 0.8.0'
+gem 'faraday_middleware'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
