@@ -21,6 +21,10 @@ module Fyber
       @conn.get "/feed/v1/offers.json?#{query_data}"
     end
 
+    def check_response(data, signature_key)
+      Digest::SHA1.hexdigest("#{data}#{@config[:api_key]}") == signature_key
+    end
+
     private
 
     def generate_params_sha1_hash(params, api_key)

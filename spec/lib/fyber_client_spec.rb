@@ -23,4 +23,28 @@ describe Fyber::Client do
       expect(resp.status).to be(200)
     end
   end
+
+  context '.check_response' do
+    context 'with empty data' do
+      it 'and valid signature' do
+        expect(fyber.check_response('', Digest::SHA1.hexdigest(ENV['FYBER_API_KEY']))).to be_truthy
+      end
+
+      it 'and invalid signature' do
+        expect(fyber.check_response('', Digest::SHA1.hexdigest(''))).to be_falsy
+      end
+    end
+
+    context 'with data' do
+      it 'and valid signature' do
+        signature_key = Digest::SHA1.hexdigest("something#{ENV['FYBER_API_KEY']}")
+        expect(fyber.check_response('something', signature_key)).to be_truthy
+      end
+
+      it 'and invalid signature' do
+        signature_key = Digest::SHA1.hexdigest("this is wrong#{ENV['FYBER_API_KEY']}")
+        expect(fyber.check_response('something', signature_key)).to be_falsy
+      end
+    end
+  end
 end
