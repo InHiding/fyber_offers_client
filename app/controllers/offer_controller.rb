@@ -17,7 +17,7 @@ class OfferController < ApplicationController
       if fclient.check_response(res.body, res.headers['x-sponsorpay-response-signature'])
         @info = result[:information]
         page = search_params[:page] || 1
-        @offers = WillPaginate::Collection.create(page, 15, result[:count]) do |pager|
+        @offers = WillPaginate::Collection.create(page, 30, result[:count]) do |pager|
           pager.replace result.try(:[], :offers) || []
         end
       else
