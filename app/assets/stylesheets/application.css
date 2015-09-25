@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+img.thumb {
+  max-height: 4em;
+}
