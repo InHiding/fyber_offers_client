@@ -12,5 +12,14 @@ module Fyber
         faraday.adapter Faraday.default_adapter  # make requests with Net::HTTP
       end
     end
+
+    def get_offers(options = {})
+      params = options.merge(@config.except(:api_key))
+      sorted_params = params.sort_by { |k, _| k }.map { |k, v| "#{k}=#{v}" }.join('&')
+      hashkey = Digest::SHA1.hexdigest "#{sorted_params}&#{@config[:api_key]}"
+      query_data = "#{params.to_query}&hashkey=#{hashkey}"
+
+      @conn.get "/feed/v1/offers.json?#{query_data}"
+    end
   end
 end
