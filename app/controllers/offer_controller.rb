@@ -2,18 +2,30 @@ require 'fyber_client'
 
 class OfferController < ApplicationController
   def index
-    search_params = { uid: 'player1', pub0: 'campaign2', timestamp: Time.current.to_i.to_s, page: 2 }
+    search_params = { timestamp: Time.current.to_i.to_s }
+    search_params.merge! params.try(:[], :offer).try(:symbolize_keys) || {}
+
+    # since we're no using active record, use openstruct to take benefit from rails form management
+    @offer = OpenStruct.new(search_params)
 
     fclient = Fyber::Client.new
     res = fclient.get_offers(search_params)
 
     result = JSON.parse(res.body).symbolize_keys
 
-    if fclient.check_response(res.body, res.headers['x-sponsorpay-response-signature'])
-      @info = result[:information]
-      @offers = result.try(:[], :offers)
+    if res.status == 200
+      if fclient.check_response(res.body, res.headers['x-sponsorpay-response-signature'])
+        @info = result[:information]
+        @offers = result.try(:[], :offers)
+      else
+        @error = 'Server sent an invalid response. Please try again.'
+      end
     else
-      @error = 'Server sent an invalid response. Please try again.'
+      if result[:code] == 'ERROR_INVALID_UID'
+        @error = 'You must provide an user name.' if params[:commit]
+      else
+        @error = result[:message]
+      end
     end
   end
 end
