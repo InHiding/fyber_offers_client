@@ -1,2 +1,42 @@
-<h1>Offer#index</h1>
-<p>Find me in app/views/offer/index.html.erb</p>
+<h1>Available Offers:</h1>
+
+<%= form_for :offer, method: :get, url: '/' do |f| %>
+  <div class="form-group">
+    <%= f.text_field :uid, placeholder: 'User', class: 'form-control' %>
+    <%= f.text_field :pub0, placeholder: 'Custom Params', class: 'form-control' %>
+    <%= f.text_field :page, type: :number, placeholder: 'Page', class: 'form-control' %>
+
+    <%= f.submit 'Find Offers', class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<div id="content">
+  <% if @error %>
+    <div>
+      There's a problem on your search: <%= @error %>
+    </div>
+  <% elsif @offers.blank? %>
+    <div>
+      Sorry, we have no offers available
+    </div>
+  <% else %>
+      <table>
+        <thead>
+          <tr>
+            <th>Thumb</th>
+            <th>Offer</th>
+            <th>Payout</th>
+          </tr>
+        </thead>
+        <tbody>
+      <% @offers.each do |offer| %>
+        <tr>
+          <td><%= image_tag(offer.try(:[],'thumbnail').try(:[],'lowres') || 'http://qualitywineandspirits.com/images/offerIcon.png', alt: offer['title']) %></td>
+          <td><%= offer['title'] %></td>
+          <td><%= "#{number_to_currency(offer['payout'], unit: '$ ')} #{@info['virtual_currency']}" %></td>
+        </tr>
+      <% end -%>
+        </tbody>
+      </table>
+  <% end %>
+</div>

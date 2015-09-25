@@ -1,3 +1,5 @@
+require 'fyber_client'
+
 class OfferController < ApplicationController
   def index
     search_params = { uid: 'player1', pub0: 'campaign2', timestamp: Time.current.to_i.to_s, page: 2 }
