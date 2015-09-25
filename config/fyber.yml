@@ -1,0 +1,17 @@
+base: &base
+  format: json
+  locale: de
+  offer_types: 112
+  appid: <%= ENV["FYBER_APP_ID"] %>
+  device_id: <%= ENV["FYBER_DEVICE_ID"] %>
+  ip: <%= ENV["FYBER_ORIGIN_IP"] %>
+  api_key: <%= ENV["FYBER_API_KEY"] %>
+
+development:
+  <<: *base
+
+test:
+  <<: *base
+
+production:
+  <<: *base
