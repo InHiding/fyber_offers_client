@@ -15,11 +15,17 @@ module Fyber
 
     def get_offers(options = {})
       params = options.merge(@config.except(:api_key))
-      sorted_params = params.sort_by { |k, _| k }.map { |k, v| "#{k}=#{v}" }.join('&')
-      hashkey = Digest::SHA1.hexdigest "#{sorted_params}&#{@config[:api_key]}"
+      hashkey = generate_params_sha1_hash(params, @config[:api_key])
       query_data = "#{params.to_query}&hashkey=#{hashkey}"
 
       @conn.get "/feed/v1/offers.json?#{query_data}"
+    end
+
+    private
+
+    def generate_params_sha1_hash(params, api_key)
+      sorted_params = params.sort_by { |k, _| k }.map { |k, v| "#{k}=#{v}" }.join('&')
+      Digest::SHA1.hexdigest "#{sorted_params}&#{@config[:api_key]}"
     end
   end
 end
