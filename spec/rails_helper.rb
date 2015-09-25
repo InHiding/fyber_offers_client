@@ -5,6 +5,7 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
+require 'vcr'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -37,4 +38,20 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
+
+  VCR.configure do |config|
+    config.cassette_library_dir = 'fixtures/vcr_cassettes'
+    config.hook_into :faraday
+    config.default_cassette_options = { record: :new_episodes }
+    config.configure_rspec_metadata!
+    config.allow_http_connections_when_no_cassette = true
+
+    config.before_http_request do |request|
+      VCR.insert_cassette('fyber', :record => :new_episodes, match_requests_on: [:method, :uri, :body])
+    end
+
+    config.after_http_request do |request|
+      VCR.eject_cassette
+    end
+  end
 end
